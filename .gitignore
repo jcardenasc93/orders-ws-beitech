@@ -80,3 +80,6 @@ media/
 
 # .ini conf files
 *.ini
+
+# Vim
+.vim/
