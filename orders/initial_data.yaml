@@ -1,0 +1,109 @@
+# This file contains the initial data to load to the DB
+
+# Products
+- model: orders.product
+  pk: 1
+  fields:
+    name: Computer
+    product_description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    price: 2000.99
+    
+- model: orders.product
+  pk: 2
+  fields:
+    name: Mobile Phone
+    product_description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    price: 1500.00
+
+- model: orders.product
+  pk: 3
+  fields:
+    name: Camera
+    product_description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    price: 650.00
+
+- model: orders.product
+  pk: 4
+  fields:
+    name: Headphones
+    product_description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    price: 877.00
+
+- model: orders.product
+  pk: 5
+  fields:
+    name: Keyboard
+    product_description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    price: 1250.00
+
+# Customers
+- model: orders.customer
+  pk: 1
+  fields:
+    name: Ronaldinho
+    email: ronaldinho@example.com
+
+- model: orders.customer
+  pk: 2
+  fields:
+    name: Ronaldo
+    email: ronaldo@example.com
+
+- model: orders.customer
+  pk: 3
+  fields:
+    name: Julieta
+    email: julieta@example.com
+
+# Customer-Products
+
+# Ronaldinho products
+- model: orders.customerproduct
+  pk: 1
+  fields:
+    product_id: 1
+    customer_id: 1
+
+- model: orders.customerproduct
+  pk: 2
+  fields:
+    product_id: 3
+    customer_id: 1
+
+- model: orders.customerproduct
+  pk: 3
+  fields:
+    product_id: 4
+    customer_id: 1
+
+# Ronaldo products
+- model: orders.customerproduct
+  pk: 4
+  fields:
+    product_id: 1
+    customer_id: 2
+
+# Julieta products
+- model: orders.customerproduct
+  pk: 5
+  fields:
+    product_id: 2
+    customer_id: 3
+
+- model: orders.customerproduct
+  pk: 6
+  fields:
+    product_id: 3
+    customer_id: 3
+
+- model: orders.customerproduct
+  pk: 7
+  fields:
+    product_id: 4
+    customer_id: 3
+
+- model: orders.customerproduct
+  pk: 8
+  fields:
+    product_id: 5
+    customer_id: 3
