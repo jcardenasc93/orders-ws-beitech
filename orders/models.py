@@ -62,7 +62,7 @@ class Order(models.Model):
 class OrderDetail(models.Model):
     """ Order detail model definition """
     order_detail_id = models.AutoField(auto_created=True, primary_key=True)
-    order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order_id = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_details')
     product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
     customer_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
     product_description = models.CharField(max_length=CHAR_MAX_LENGTH, blank=True)

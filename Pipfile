@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 django = "==3.1.0"
 pyyaml = "*"
+django-rest-framework = "*"
 
 [dev-packages]
 yapf = "*"
