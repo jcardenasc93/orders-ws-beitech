@@ -82,3 +82,17 @@ class OrderCreator:
             "total": self.total
         }
         return order
+
+    def add_order_details(self, order):
+        """ This method adds OrderDetail objects
+        to the created order
+        """
+        for product in self.products_in_request:
+            order_detail = OrderDetail(
+                    product_id=Product.objects.get(pk=product.get('product_id')),
+                    order_id=order,
+                    quantity=product.get('quantity')
+                    )
+            order_detail.save()
+
+

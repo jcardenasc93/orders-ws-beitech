@@ -60,9 +60,9 @@ class OrderViewSet(viewsets.ViewSet):
         order_info = order_creator.retrieve_order_info()
         serialize_data = self.serializer(data=order_info)
         if serialize_data.is_valid():
-            print('=' * 90)
-            print(serialize_data.validated_data)
-            serialize_data.save()
+            # Records order
+            order = serialize_data.save()
+            order_creator.add_order_details(order)
             return Response(data=serialize_data.data)
         else:
             return Response(data=serialize_data.errors, status=400)
