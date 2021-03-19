@@ -62,10 +62,12 @@ class Order(models.Model):
 class OrderDetail(models.Model):
     """ Order detail model definition """
     order_detail_id = models.AutoField(auto_created=True, primary_key=True)
+    order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
     product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
     customer_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    product_description = models.CharField(max_length=CHAR_MAX_LENGTH)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    product_description = models.CharField(max_length=CHAR_MAX_LENGTH, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
+    quantity = models.IntegerField(max_length=999999999)
 
     class Meta:
         db_table = 'order_detail'
