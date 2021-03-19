@@ -13,6 +13,8 @@ class Product(models.Model):
     product_description = models.CharField(max_length=CHAR_MAX_LENGTH)
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
+    def __str__(self):
+        return f"{self.product_id}- {self.name}"
     class Meta:
         db_table = 'product'
 
@@ -21,7 +23,10 @@ class Customer(models.Model):
     """ Customer model definition """
     customer_id = models.AutoField(auto_created=True, primary_key=True)
     name = models.CharField(max_length=CHAR_MAX_LENGTH)
-    email = models.EmailField(max_length=CHAR_MAX_LENGTH)
+    email = models.EmailField(max_length=CHAR_MAX_LENGTH, unique=True)
+
+    def __str__(self):
+        return f"{self.customer_id}- {self.email}"
 
     class Meta:
         db_table = 'customer'
@@ -46,6 +51,9 @@ class Order(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     delivery_address = models.CharField(max_length=CHAR_MAX_LENGTH)
     total = models.DecimalField(max_digits=15, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.order_id}- {self.creation_date}"
 
     class Meta:
         db_table = 'order'
