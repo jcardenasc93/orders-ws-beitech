@@ -1,0 +1,10 @@
+{
+  "name": "Beitech Orders Service",
+  "version": "0.0.0",
+  "description": "Beitech API that expose customer orders resources",
+  "sampleUrl": "http://127.0.0.1:8000",
+  "apidoc": {
+    "title": "Test browser",
+    "url": "beitech.orders.domain.com"
+  }
+}

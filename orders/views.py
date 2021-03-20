@@ -3,6 +3,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from django.urls import reverse
 import requests
 import datetime
@@ -81,6 +82,7 @@ class OrderViewSet(viewsets.ViewSet):
             return Response(data=serialize_data.errors, status=400)
 
 
+@api_view(['GET', 'POST'])
 def render_view(request):
     """ This view render the HTML template based on
     the HTTP method
@@ -107,3 +109,4 @@ def render_view(request):
         # Builds context to pass it to template
         context = {"customers": customers, "orders": response}
         return render(request, ORDERS_TEMPLATE, context)
+

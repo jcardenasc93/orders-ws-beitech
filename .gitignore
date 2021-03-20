@@ -83,3 +83,6 @@ media/
 
 # Vim
 .vim/
+
+# Apidoc
+docs/
