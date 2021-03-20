@@ -48,7 +48,7 @@ class Order(models.Model):
     """ Order model definition """
     order_id = models.AutoField(auto_created=True, primary_key=True)
     customer_id = models.ForeignKey(Customer, on_delete=models.CASCADE, db_column='customer_id')
-    creation_date = models.DateTimeField(auto_now_add=True)
+    creation_date = models.DateField(auto_now_add=True)
     delivery_address = models.CharField(max_length=CHAR_MAX_LENGTH)
     total = models.DecimalField(max_digits=15, decimal_places=2)
 

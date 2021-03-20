@@ -5,6 +5,7 @@ from orders.models import Order, OrderDetail, Customer, Product, CustomerProduct
 from django.urls import reverse
 import json
 import decimal
+import datetime
 
 
 class OrderTestCase(TestCase):
@@ -88,12 +89,38 @@ class OrderTestCase(TestCase):
 
     def test_list_orders(self):
         """ List orders unit test """
-        response = self.client.get(reverse('orders'))
+        # Success case
+        from django.test import Client
+        client = Client()
+        today = datetime.date.today()
+        dates = {'start_date': str(today), 'end_date': str(today)}
+        response = client.get(reverse('orders'), dates)
         self.assertEqual(200, response.status_code)
         response = json.loads(response.content)
         self.assertEqual(2, len(response))
         jose_order = response[0]
         self.assertEqual(2, len(jose_order.get('order_details')))
+
+        # Empty response
+        yesterday = today - datetime.timedelta(days=1)
+        dates = {'start_date': str(yesterday), 'end_date': str(yesterday)}
+        response = client.get(reverse('orders'), dates)
+        self.assertEqual(200, response.status_code)
+        response = json.loads(response.content)
+        self.assertEqual(0, len(response))
+
+    def test_fail_list_orders(self):
+        """ Tests fail cases for list orders """
+        # No dates given
+        dates = {'start_date': 'any-input', 'end_date': 'any_input'}
+        from django.test import Client
+        client = Client()
+        response = client.get(reverse('orders'))
+        self.assertEqual(400, response.status_code)
+
+        # Bad dates given
+        response = client.get(reverse('orders'), dates)
+        self.assertEqual(400, response.status_code)
 
     def test_create_order(self):
         """ Create orders test cases """

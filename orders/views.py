@@ -11,6 +11,7 @@ from orders.models import Product, CustomerProduct, Customer, Order, OrderDetail
 from orders.serializers import OrderDetailSerializer, OrderSerializer
 # utils
 from orders.utils.order_creator import OrderCreator
+from orders.utils.params_validator import validate_query_params
 
 
 class OrderViewSet(viewsets.ViewSet):
@@ -28,10 +29,16 @@ class OrderViewSet(viewsets.ViewSet):
 
     def list(self, request):
         """ Defines list queryset to retrieve """
-        orders = Order.objects.all()
+        dates = validate_query_params(request.GET)
+        if dates is None:
+            error_msg = "Invalid request. Please check dates format (AAAA-MM-DD)"
+            return self._error_response(error_msg)
+
+        orders = Order.objects.filter(
+            creation_date__gte=dates.get('start_date'),
+            creation_date__lte=dates.get('end_date'))
         orders = self.serializer(orders, many=True)
         return Response(data=orders.data, status=200)
-
 
     def create(self, request):
         """ Overrides create method to handle
@@ -54,7 +61,6 @@ class OrderViewSet(viewsets.ViewSet):
                 return self._error_response(msg=error_msg)
         except Exception:
             return self._error_response()
-
 
         # All checks passed
         order_info = order_creator.retrieve_order_info()
