@@ -53,6 +53,21 @@
                           "quantity": 2
                         }
                       ]
+@apiParamExample {json} JSON-body:
+            {
+              "delivery_address": "avenida siempre viva 123",
+              "products": [
+                {
+                  "product_id": 1,
+                  "quantity": 1
+                },
+                {
+                  "product_id": 3,
+                  "quantity": 2
+                }
+              ]
+            }
+
 @apiSuccessExample {json}   Success-Response:
     HTTP/1.1 200 OK
     {
