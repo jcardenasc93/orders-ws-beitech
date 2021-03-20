@@ -5,7 +5,7 @@ This project conatins the develop of the tech test for python developer position
 
 This is the entity-relationship model defined for the solution
 
-[](https://github.com/jcardenasc93/orders-ws-beitech/blob/main/images/ER_model.png)
+![er-model](https://github.com/jcardenasc93/orders-ws-beitech/blob/main/images/ER_model.png)
 
 ### SQL script to create database
 
