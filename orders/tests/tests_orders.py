@@ -94,17 +94,17 @@ class OrderTestCase(TestCase):
         client = Client()
         today = datetime.date.today()
         dates = {'start_date': str(today), 'end_date': str(today)}
-        response = client.get(reverse('orders'), dates)
+        response = client.get(reverse('orders', args=[self.customer_jose.pk]),
+                              dates)
         self.assertEqual(200, response.status_code)
         response = json.loads(response.content)
-        self.assertEqual(2, len(response))
-        jose_order = response[0]
-        self.assertEqual(2, len(jose_order.get('order_details')))
+        self.assertEqual(1, len(response))
 
         # Empty response
         yesterday = today - datetime.timedelta(days=1)
         dates = {'start_date': str(yesterday), 'end_date': str(yesterday)}
-        response = client.get(reverse('orders'), dates)
+        response = client.get(reverse('orders', args=[self.customer_jose.pk]),
+                              dates)
         self.assertEqual(200, response.status_code)
         response = json.loads(response.content)
         self.assertEqual(0, len(response))
@@ -115,25 +115,30 @@ class OrderTestCase(TestCase):
         dates = {'start_date': 'any-input', 'end_date': 'any_input'}
         from django.test import Client
         client = Client()
-        response = client.get(reverse('orders'))
+        response = client.get(reverse('orders', args=[self.customer_jose.pk]))
         self.assertEqual(400, response.status_code)
 
         # Bad dates given
-        response = client.get(reverse('orders'), dates)
+        response = client.get(reverse('orders', args=[self.customer_jose.pk]),
+                              dates)
+        self.assertEqual(400, response.status_code)
+
+        # User not found
+        response = client.get(reverse('orders', args=[5]), dates)
         self.assertEqual(400, response.status_code)
 
     def test_create_order(self):
         """ Create orders test cases """
         # Success case
         payload = {
-            "customer_id": self.customer_jose.pk,
             "delivery_address": "Django street 3.1",
             "products": [{
                 "product_id": self.product_a.pk,
                 "quantity": 2
             }]
         }
-        response = self.client.post(reverse('orders'),
+        response = self.client.post(reverse('orders',
+                                            args=[self.customer_jose.pk]),
                                     json.dumps(payload),
                                     content_type='application/json')
         self.assertEqual(200, response.status_code)
@@ -150,7 +155,8 @@ class OrderTestCase(TestCase):
             "customer_id": self.customer_jose.pk,
             "delivery_address": "Django street 3.1",
         }
-        response = self.client.post(reverse('orders'),
+        response = self.client.post(reverse('orders',
+                                            args=[self.customer_jose.pk]),
                                     json.dumps(payload),
                                     content_type='application/json')
         self.assertEqual(400, response.status_code)
@@ -163,7 +169,14 @@ class OrderTestCase(TestCase):
             "product_id": self.product_a.pk,
             "quantity": 1
         }]
-        response = self.client.post(reverse('orders'),
+        response = self.client.post(reverse('orders',
+                                            args=[self.customer_jose.pk]),
+                                    json.dumps(payload),
+                                    content_type='application/json')
+        self.assertEqual(400, response.status_code)
+
+        # User not found
+        response = self.client.post(reverse('orders', args=[5]),
                                     json.dumps(payload),
                                     content_type='application/json')
         self.assertEqual(400, response.status_code)
