@@ -4,6 +4,7 @@ from django.test import TestCase
 from orders.models import Order, OrderDetail, Customer, Product, CustomerProduct
 from django.urls import reverse
 import json
+import decimal
 
 
 class OrderTestCase(TestCase):
@@ -11,30 +12,31 @@ class OrderTestCase(TestCase):
 
     def _create_products(self):
         """ Creates different products for test """
+        default_price = decimal.Decimal('100.99')
         self.product_a = Product.objects.create(
             name='Prodcut A',
             product_description='Brief description',
-            price=100.00)
+            price=default_price)
         self.product_b = Product.objects.create(
             name='Prodcut B',
             product_description='Brief description',
-            price=100.00)
+            price=default_price)
         self.product_c = Product.objects.create(
             name='Prodcut C',
             product_description='Brief description',
-            price=100.00)
+            price=default_price)
         self.product_d = Product.objects.create(
             name='Prodcut D',
             product_description='Brief description',
-            price=100.00)
+            price=default_price)
         self.product_e = Product.objects.create(
             name='Prodcut E',
             product_description='Brief description',
-            price=100.00)
+            price=default_price)
         self.product_f = Product.objects.create(
             name='Prodcut F',
             product_description='Brief description',
-            price=100.00)
+            price=default_price)
 
     def _create_customers(self):
         """ Creates customers for testing """
@@ -93,4 +95,48 @@ class OrderTestCase(TestCase):
         jose_order = response[0]
         self.assertEqual(2, len(jose_order.get('order_details')))
 
+    def test_create_order(self):
+        """ Create orders test cases """
+        # Success case
+        payload = {
+            "customer_id": self.customer_jose.pk,
+            "delivery_address": "Django street 3.1",
+            "products": [{
+                "product_id": self.product_a.pk,
+                "quantity": 2
+            }]
+        }
+        response = self.client.post(reverse('orders'),
+                                    json.dumps(payload),
+                                    content_type='application/json')
+        self.assertEqual(200, response.status_code)
+        # Check total order
+        total = json.loads(response.content).get('total')
+        expected_total = payload.get('products')[0].get(
+            'quantity') * self.product_a.price
+        self.assertEqual(str(expected_total), total)
 
+    def test_fail_create_order(self):
+        """ Fail create order test cases """
+        # Fail case: Missing parameters
+        payload = {
+            "customer_id": self.customer_jose.pk,
+            "delivery_address": "Django street 3.1",
+        }
+        response = self.client.post(reverse('orders'),
+                                    json.dumps(payload),
+                                    content_type='application/json')
+        self.assertEqual(400, response.status_code)
+
+        # Fails case: Invalid user products
+        payload['products'] = [{
+            "product_id": self.product_d.pk,
+            "quantity": 1
+        }, {
+            "product_id": self.product_a.pk,
+            "quantity": 1
+        }]
+        response = self.client.post(reverse('orders'),
+                                    json.dumps(payload),
+                                    content_type='application/json')
+        self.assertEqual(400, response.status_code)
