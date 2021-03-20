@@ -9,6 +9,7 @@ pyyaml = "*"
 django-rest-framework = "*"
 requests = "*"
 python-dateutil = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 yapf = "*"
