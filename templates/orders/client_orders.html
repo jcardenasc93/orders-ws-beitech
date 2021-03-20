@@ -1,0 +1,46 @@
+<h2>Client Orders</h2>
+<p>Please select one of the customers to list its last month orders<p>
+<form action="" method="POST">
+  {% csrf_token %}
+  <select name="customer_id">
+    <option  value="" selected="selected">---SELECT---</option>
+    {% for customer in customers %}
+     <option value="{{customer.pk}}">{{customer}}</option>
+    {% endfor %}
+  </select>
+  <input type="submit" value="Select">
+</form>
+{% if orders %}
+<br>
+  <table style="width:100%" border="1">
+    <tr>
+      <th>Creation Date</th>
+      <th>Order ID</th>
+      <th>Total $</th>
+      <th>Delivery Address</th>
+      <th>Products</th>
+    </tr>
+    {% for order in orders %}
+    <tr>
+      <th>{{order.creation_date}}</th>
+      <th>{{order.order_id}}</th>
+      <th>{{order.total}}</th>
+      <th>{{order.delivery_address}}</th>
+      <th>
+        <table>
+          {% for product in order.order_details %}
+          <tr>
+            <th>
+            {{product.quantity}} X {{product.product_name}}
+            </th>
+          </tr>
+          {% endfor %}
+        </table>
+      </th>
+    </tr>
+    {% endfor %}
+  </table>
+{% endif %}
+
+
+

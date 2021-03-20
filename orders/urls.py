@@ -1,10 +1,11 @@
 """ Orders urls.py """
 
 from django.urls import path
-from orders.views import OrderViewSet
+from orders.views import OrderViewSet, render_view
 
 urlpatterns = [
-        path(r'orders/<int:customer_id>',
+        path(r'', render_view, name='index'),
+        path(r'orders/customer/<int:customer_id>',
          OrderViewSet.as_view({
              'get': 'list',
              'post': 'create'

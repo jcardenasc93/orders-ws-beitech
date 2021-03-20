@@ -3,7 +3,11 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
-from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
+import requests
+import datetime
+from dateutil.relativedelta import relativedelta
+import json
 
 # Models
 from orders.models import Product, CustomerProduct, Customer, Order, OrderDetail
@@ -34,10 +38,9 @@ class OrderViewSet(viewsets.ViewSet):
             error_msg = "Invalid request. Please check filter criteria"
             return self._error_response(error_msg)
 
-        orders = Order.objects.filter(
-            customer_id=data.get('customer'),
-            creation_date__gte=data.get('start_date'),
-            creation_date__lte=data.get('end_date'))
+        orders = Order.objects.filter(customer_id=data.get('customer'),
+                                      creation_date__gte=data.get('start_date'),
+                                      creation_date__lte=data.get('end_date'))
         orders = self.serializer(orders, many=True)
         return Response(data=orders.data, status=200)
 
@@ -76,3 +79,31 @@ class OrderViewSet(viewsets.ViewSet):
             return Response(data=serialize_data.data)
         else:
             return Response(data=serialize_data.errors, status=400)
+
+
+def render_view(request):
+    """ This view render the HTML template based on
+    the HTTP method
+    """
+    ORDERS_TEMPLATE = 'orders/client_orders.html'
+    customers = Customer.objects.all()
+
+    if request.method == 'GET':
+        context = {"customers": customers}
+        return render(request, ORDERS_TEMPLATE, context)
+
+    if request.method == "POST":
+        # Calcs month ago date
+        today = datetime.date.today()
+        month_ago = today - relativedelta(months=1)
+        dates = {'start_date': month_ago, 'end_date': today}
+        customer_id = request.POST.get('customer_id')
+        # Builds the url to send the request
+        host = request.get_host()
+        protocol = 'https://' if request.is_secure() else 'http://'
+        url = f"{protocol}{host}/orders/customer/{customer_id}?start_date={dates.get('start_date')}&end_date={dates.get('end_date')}"
+        response = requests.get(url)
+        response = json.loads(response.content)
+        # Builds context to pass it to template
+        context = {"customers": customers, "orders": response}
+        return render(request, ORDERS_TEMPLATE, context)
