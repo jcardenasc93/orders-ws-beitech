@@ -10,8 +10,8 @@ class OrderCreator:
     for incoming orders
     """
 
-    def __init__(self, request_data: dict):
-        self.customer = Customer.objects.get(pk=request_data['customer_id'])
+    def __init__(self, request_data: dict, customer_id):
+        self.customer = Customer.objects.get(pk=customer_id)
         self.delivery_address = request_data['delivery_address']
         self.products_in_request = request_data['products']
         self.products_ids = [

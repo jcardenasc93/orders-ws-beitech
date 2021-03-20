@@ -27,27 +27,31 @@ class OrderViewSet(viewsets.ViewSet):
             return Response(data=msg, status=400)
         return Response(data=self.INVALID_REQUEST_MSG, status=400)
 
-    def list(self, request):
+    def list(self, request, customer_id=None):
         """ Defines list queryset to retrieve """
-        dates = validate_query_params(request.GET)
-        if dates is None:
-            error_msg = "Invalid request. Please check dates format (AAAA-MM-DD)"
+        data = validate_query_params(request.GET, customer_id)
+        if data is None:
+            error_msg = "Invalid request. Please check filter criteria"
             return self._error_response(error_msg)
 
         orders = Order.objects.filter(
-            creation_date__gte=dates.get('start_date'),
-            creation_date__lte=dates.get('end_date'))
+            customer_id=data.get('customer'),
+            creation_date__gte=data.get('start_date'),
+            creation_date__lte=data.get('end_date'))
         orders = self.serializer(orders, many=True)
         return Response(data=orders.data, status=200)
 
-    def create(self, request):
+    def create(self, request, customer_id=None):
         """ Overrides create method to handle
         logic business for Order objects creation
         """
         try:
-            order_creator = OrderCreator(request.data)
+            order_creator = OrderCreator(request.data, customer_id)
         except KeyError:
             return self._error_response()
+        except Customer.DoesNotExist:
+            error_msg = "User not found"
+            return self._error_response(error_msg)
 
         if not order_creator.check_valid_customer_product():
             error_msg = "Customer cannot order these products"
